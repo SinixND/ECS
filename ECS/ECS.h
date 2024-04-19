@@ -7,22 +7,19 @@
 #include "EntityId.h"
 #include "EntityManager.h"
 #include "Signature.h"
-#include "SparseSet.h"
 #include "System.h"
-#include "SystemManager.h"
 #include <memory>
+#include <unordered_set>
+#include <vector>
 
-namespace snd
+namespace snx
 {
     class ECS
     {
     public:
         // Entities
         // ============================
-        EntityId createEntity()
-        {
-            return entityManager_.request();
-        }
+        EntityId createEntity() { return entityManager_.request(); }
 
         void removeEntity(EntityId entityId)
         {
@@ -162,10 +159,16 @@ namespace snd
                 auto systemSignature{system->getSignature()};
 
                 // check if component type is relevant to system
-                if (!systemSignature.test(componentTypeId)) continue;
+                if (!systemSignature.test(componentTypeId))
+                {
+                    continue;
+                }
 
                 // check if entity signature is relevant to system
-                if ((entityManager_.getSignature(entityId) & systemSignature) != systemSignature) continue;
+                if ((entityManager_.getSignature(entityId) & systemSignature) != systemSignature)
+                {
+                    continue;
+                }
 
                 // register entity
                 system->registerEntity(entityId);
@@ -180,10 +183,16 @@ namespace snd
                 auto systemSignature{system->getSignature()};
 
                 // check if component type is relevant to system
-                if (!systemSignature.test(componentTypeId)) continue;
+                if (!systemSignature.test(componentTypeId))
+                {
+                    continue;
+                }
 
                 // check if entity signature is relevant to system
-                if ((entityManager_.getSignature(entityId) & systemSignature) != systemSignature) continue;
+                if ((entityManager_.getSignature(entityId) & systemSignature) != systemSignature)
+                {
+                    continue;
+                }
 
                 // deregister entity
                 system->deregisterEntity(entityId);
@@ -191,6 +200,6 @@ namespace snd
         }
         // ============================
     };
-}
+} // namespace snx
 
 #endif

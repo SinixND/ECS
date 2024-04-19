@@ -6,76 +6,56 @@
 #include "Signature.h"
 #include <unordered_set>
 
-namespace snd
-{
-    class ECS;
+namespace snx {
+class ECS;
 
-    class ISystem
-    {
-    public:
-        virtual void action(EntityId) = 0;
+class ISystem {
+public:
+  virtual void action(EntityId) = 0;
 
-        void execute()
-        {
-            for (auto it{entities_.begin()}; it != entities_.end();)
-            {
-                action(*it++);
-            }
-        }
+  void execute() {
+    for (auto it{entities_.begin()}; it != entities_.end();) {
+      action(*it++);
+    }
+  }
 
-        void registerEntity(EntityId entityId)
-        {
-            entities_.insert(entityId);
-        }
+  void registerEntity(EntityId entityId) { entities_.insert(entityId); }
 
-        void deregisterEntity(EntityId entityId)
-        {
-            entities_.erase(entityId);
-        }
+  void deregisterEntity(EntityId entityId) { entities_.erase(entityId); }
 
-        Signature& getSignature()
-        {
-            return signature_;
-        }
+  Signature &getSignature() { return signature_; }
 
-        virtual ~ISystem() = default;
+  virtual ~ISystem() = default;
 
-    protected:
-        std::unordered_set<EntityId> entities_;
-        Signature signature_;
-    };
+protected:
+  std::unordered_set<EntityId> entities_;
+  Signature signature_;
+};
 
-    template <typename ComponentType, typename... ComponentTypes>
-    class System
-        : public ISystem
-    {
-    public:
-        virtual void action(EntityId) = 0;
-        void cleanup();
+template <typename ComponentType, typename... ComponentTypes>
+class System : public ISystem {
+public:
+  virtual void action(EntityId) = 0;
+  void cleanup();
 
-        System(ECS* ecs)
-            : ecs_(ecs)
-        {
-            registerComponentTypes<ComponentType, ComponentTypes...>();
-        }
+  System(ECS *ecs) : ecs_(ecs) {
+    registerComponentTypes<ComponentType, ComponentTypes...>();
+  }
 
-    protected:
-        ECS* ecs_;
+protected:
+  ECS *ecs_;
 
-    protected:
-        template <typename LastType>
-        void registerComponentTypes()
-        {
-            signature_.set(Component<LastType>::getId());
-        }
+protected:
+  template <typename LastType> void registerComponentTypes() {
+    signature_.set(Component<LastType>::getId());
+  }
 
-        template <typename FirstType, typename SecondType, typename... RemainingTypes>
-        void registerComponentTypes()
-        {
-            registerComponentTypes<FirstType>();
-            registerComponentTypes<SecondType, RemainingTypes...>();
-        }
-    };
-}
+  template <typename FirstType, typename SecondType, typename... RemainingTypes>
+  void registerComponentTypes() {
+    registerComponentTypes<FirstType>();
+    registerComponentTypes<SecondType, RemainingTypes...>();
+  }
+};
+} // namespace snx
 
 #endif

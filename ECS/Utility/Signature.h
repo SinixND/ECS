@@ -1,8 +1,7 @@
 #ifndef SIGNATURE_H_20231220225930
 #define SIGNATURE_H_20231220225930
 
-#include "Id.h"
-#include <string_view>
+#include <cstddef>
 
 // Define signature implementation type
 //=====================================
@@ -15,12 +14,12 @@
 #include <bitset>
 #endif
 
-namespace snd
+namespace snx
 {
-    // Set signature type
-    //=================================
+// Set signature type
+//=================================
 #ifdef BITSET
-    const Id MAX_COMPONENTS = 40;
+    const size_t MAX_COMPONENTS = 40;
     using Signature = std::bitset<MAX_COMPONENTS>;
 #endif
     //=================================
@@ -74,6 +73,6 @@ namespace snd
             SignatureType signature_{0};
         };
         */
-}
+} // namespace snx
 
 #endif

@@ -1,0 +1,9 @@
+.cache
+.clang*
+Makefile
+src
+bin
+build
+*.out
+.vscode
+compile_commands

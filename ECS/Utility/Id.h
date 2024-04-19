@@ -5,7 +5,7 @@
 
 #include <cstddef> // Size_t
 
-namespace snd
+namespace snx
 {
     using Id = std::size_t;
 }

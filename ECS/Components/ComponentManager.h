@@ -5,12 +5,12 @@
 #include "ComponentTypeId.h"
 #include "EntityId.h"
 #include "SparseSet.h"
-#include <cstddef>
 #include <memory>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
-namespace snd
+namespace snx
 {
     class ComponentManager
     {
@@ -37,7 +37,9 @@ namespace snd
         {
             // Check if entity exists
             if (!testEntity<ComponentType>(entityId))
+            {
                 return;
+            }
 
             // Remove component
             getComponentContainer<ComponentType>()->erase(entityId);
@@ -49,7 +51,9 @@ namespace snd
         {
             // Check if entity exists
             if (!testEntity<ComponentType>(entityId))
+            {
                 return nullptr;
+            }
 
             // Return component
             return getComponentContainer<ComponentType>()->get(entityId);
@@ -60,13 +64,17 @@ namespace snd
         std::vector<ComponentType>* getAllComponents()
         {
             // Check if container exists
-            if (!testContainer<ComponentType>()) return nullptr;
+            if (!testContainer<ComponentType>())
+            {
+                return nullptr;
+            }
 
             // Return vector of components
             return getComponentContainer<ComponentType>()->getAllElements();
         }
 
-        std::unordered_map<ComponentTypeId, std::shared_ptr<ISparseSet<EntityId>>>* getAllContainers()
+        std::unordered_map<ComponentTypeId, std::shared_ptr<ISparseSet<EntityId>>>*
+        getAllContainers()
         {
             return &componentContainersByTypeId_;
         }
@@ -76,7 +84,10 @@ namespace snd
         EntityId getFirstEntity()
         {
             // Check if container exists
-            if (!testContainer<ComponentType>()) return 0;
+            if (!testContainer<ComponentType>())
+            {
+                return 0;
+            }
 
             // Return entity
             return getComponentContainer<ComponentType>()->getFirstKey();
@@ -86,21 +97,28 @@ namespace snd
         std::unordered_set<EntityId>* getAllEntities()
         {
             // Check if container exists
-            if (!testContainer<ComponentType>()) return nullptr;
+            if (!testContainer<ComponentType>())
+            {
+                return nullptr;
+            }
 
             // Return set of entities
             return getComponentContainer<ComponentType>()->getAllKeys();
         }
 
     private:
-        std::unordered_map<ComponentTypeId, std::shared_ptr<ISparseSet<EntityId>>> componentContainersByTypeId_{};
+        std::unordered_map<ComponentTypeId, std::shared_ptr<ISparseSet<EntityId>>>
+            componentContainersByTypeId_{};
 
     private:
         // Check if entity exists in container
         template <typename ComponentType>
         bool testEntity(EntityId entityId)
         {
-            if (!testContainer<ComponentType>()) return false;
+            if (!testContainer<ComponentType>())
+            {
+                return false;
+            }
 
             return getComponentContainer<ComponentType>()->test(entityId);
         }
@@ -121,22 +139,27 @@ namespace snd
 
         // Get component type id
         template <typename ComponentType>
-        ComponentTypeId getId() { return Component<ComponentType>::getId(); }
+        ComponentTypeId getId()
+        {
+            return Component<ComponentType>::getId();
+        }
 
         // Register component type
         template <typename ComponentType>
         void registerComponentType()
         {
-            componentContainersByTypeId_[getId<ComponentType>()] = std::make_shared<SparseSet<EntityId, ComponentType>>();
+            componentContainersByTypeId_[getId<ComponentType>()] =
+                std::make_shared<SparseSet<EntityId, ComponentType>>();
         }
 
         // Return specialized container pointer
         template <typename ComponentType>
         std::shared_ptr<SparseSet<EntityId, ComponentType>> getComponentContainer()
         {
-            return std::static_pointer_cast<SparseSet<EntityId, ComponentType>>(componentContainersByTypeId_[getId<ComponentType>()]);
+            return std::static_pointer_cast<SparseSet<EntityId, ComponentType>>(
+                componentContainersByTypeId_[getId<ComponentType>()]);
         }
     };
-}
+} // namespace snx
 
 #endif

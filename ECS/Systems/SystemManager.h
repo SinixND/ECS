@@ -2,12 +2,10 @@
 #define SYSTEMMANAGER_H_20240103210800
 
 #include "System.h"
-#include "SystemId.h"
 #include <memory>
-#include <unordered_set>
 #include <vector>
 
-namespace snd
+namespace snx
 {
     class SystemManager
     {
@@ -21,14 +19,11 @@ namespace snd
             return &system;
         }
 
-        std::vector<std::shared_ptr<ISystem>>* getSystems()
-        {
-            return &systems_;
-        }
+        std::vector<std::shared_ptr<ISystem>>* getSystems() { return &systems_; }
 
     private:
         std::vector<std::shared_ptr<ISystem>> systems_;
     };
-}
+} // namespace snx
 
 #endif

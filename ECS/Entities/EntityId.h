@@ -1,11 +1,11 @@
 #ifndef ENTITYID_H_20231210201820
 #define ENTITYID_H_20231210201820
 
-#include "Id.h"
+#include <cstddef>
 
-namespace snd
+namespace snx
 {
-    using EntityId = Id;
+    using EntityId = size_t;
 }
 
 #endif

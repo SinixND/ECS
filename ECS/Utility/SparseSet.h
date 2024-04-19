@@ -1,13 +1,14 @@
 #ifndef SPARSESET_H_20240128195657
 #define SPARSESET_H_20240128195657
 
+#include <cstddef>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
-namespace snd
+namespace snx
 {
-    typedef size_t Index;
+    using Index = size_t;
 
     template <typename Key>
     class ISparseSet
@@ -21,8 +22,7 @@ namespace snd
     };
 
     template <typename Key, typename Type>
-    class SparseSet
-        : public ISparseSet<Key>
+    class SparseSet : public ISparseSet<Key>
     {
     public:
         // Create non-existing, update existing
@@ -46,7 +46,8 @@ namespace snd
             // Add key to elementIndex mapping
             keyToIndex_.insert(std::make_pair(key, elementIndex));
 
-            // Add elementIndex to key mapping (internal use only to keep list contiguous)
+            // Add elementIndex to key mapping (internal use only to keep list
+            // contiguous)
             indexToKey_.insert(std::make_pair(elementIndex, key));
         };
 
@@ -61,7 +62,8 @@ namespace snd
             Index removedElementIndex{keyToIndex_[key]};
             Index keptElementIndex{};
 
-            // Replace removed element with last element before popping (if more than one element exists) to keep elements contiguous
+            // Replace removed element with last element before popping (if more than
+            // one element exists) to keep elements contiguous
             if (elements_.size() > 1)
             {
                 // Get index of (kept) last element that replaces removed element
@@ -70,7 +72,8 @@ namespace snd
                 // Get key of replacing/kept element
                 Key keptkey = indexToKey_[keptElementIndex];
 
-                // Replace (removed) element with kept element (by index) so last entry (duplicate) can be popped (becomes new removed)
+                // Replace (removed) element with kept element (by index) so last entry
+                // (duplicate) can be popped (becomes new removed)
                 elements_[removedElementIndex] = elements_[keptElementIndex];
 
                 // Update element index after replacement
@@ -104,43 +107,41 @@ namespace snd
             }
         };
 
-        bool test(const Key& key) override
-        {
-            return keys_.contains(key);
-        };
+        bool test(const Key& key) override { return keys_.contains(key); };
 
         Type* get(const Key& key)
         {
             if (!test(key))
+            {
                 return nullptr;
+            }
 
             return &elements_[keyToIndex_[key]];
         };
 
-        std::vector<Type>* getAllElements()
-        {
-            return &elements_;
-        };
+        std::vector<Type>* getAllElements() { return &elements_; };
 
         Key getFirstKey()
         {
             if (keys_.empty())
+            {
                 return Key();
+            }
 
             return *keys_.begin();
         };
 
-        std::unordered_set<Key>* getAllKeys() override
-        {
-            return &keys_;
-        };
+        std::unordered_set<Key>* getAllKeys() override { return &keys_; };
 
     private:
-        std::vector<Type> elements_{};                // Vector index is used as element key
-        std::unordered_map<Key, Index> keyToIndex_{}; // Key is used to identify element
-        std::unordered_map<Index, Key> indexToKey_{}; // Store a index (element) to key mapping (internal use only)
-        std::unordered_set<Key> keys_{};              // Set of all keys in use
+        std::vector<Type> elements_{}; // Vector index is used as element key
+        std::unordered_map<Key, Index>
+            keyToIndex_{}; // Key is used to identify element
+        std::unordered_map<Index, Key>
+            indexToKey_{};               // Store a index (element) to key mapping (internal use
+                                         // only)
+        std::unordered_set<Key> keys_{}; // Set of all keys in use
     };
-}
+} // namespace snx
 
 #endif

@@ -3,9 +3,9 @@
 
 #include "Id.h"
 
-namespace snd
+namespace snx
 {
-    using SystemId = Id;
+    using SystemId = size_t;
 }
 
 #endif

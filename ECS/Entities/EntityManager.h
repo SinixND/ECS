@@ -6,8 +6,9 @@
 #include "IdManager.h"
 #include "Signature.h"
 #include <unordered_map>
+#include <utility>
 
-namespace snd
+namespace snx
 {
     class EntityManager
     {
@@ -46,6 +47,6 @@ namespace snd
         IdManager idManager_;
         std::unordered_map<EntityId, Signature> entityToSignature_;
     };
-}
+} // namespace snx
 
 #endif

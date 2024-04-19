@@ -1,11 +1,11 @@
 #ifndef COMPONENTTYPEID_H_20240101212731
 #define COMPONENTTYPEID_H_20240101212731
 
-#include "Id.h"
+#include <cstddef>
 
-namespace snd
+namespace snx
 {
-    using ComponentTypeId = Id;
+    using ComponentTypeId = size_t;
 }
 
 #endif
