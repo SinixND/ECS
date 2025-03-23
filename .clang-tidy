@@ -1,0 +1,32 @@
+Checks:          
+  -*, 
+  clang-diagnostic-*, 
+  clang-analyzer-*, 
+  #cppcoreguidelines-*, 
+  #hicpp-*, 
+  #misc-*, 
+  #modernize-*, 
+  #performance-*
+  #bugprone-*, 
+  #cert-*, 
+  #-bugprone-easily-swappable-parameters,
+  #-*narrowing-conversions,
+WarningsAsErrors: ''
+HeaderFileExtensions:
+  - ''
+  - h
+  - hh
+  - hpp
+  - hxx
+ImplementationFileExtensions:
+  - c
+  - cc
+  - cpp
+  - cxx
+CheckOptions:
+    - key: cppcoreguidelines-avoid-magic-numbers.IgnoredIntegerValues
+      value: 1;2;
+    - key: cppcoreguidelines-avoid-magic-numbers.IgnoredFloatingPointValues
+      value: 0.5;1.0;2.0;
+SystemHeaders:   false
+UseColor: true
