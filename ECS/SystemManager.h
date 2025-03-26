@@ -1,29 +1,38 @@
 #ifndef SYSTEMMANAGER_H_20240103210800
 #define SYSTEMMANAGER_H_20240103210800
 
+#include "Signature.h"
 #include "System.h"
 #include <memory>
-#include <vector>
+#include <typeindex>
+#include <unordered_map>
 
 namespace snx
 {
+    using SystemTypeId = std::type_index;
+
     class SystemManager
     {
+        std::unordered_map<SystemTypeId, std::shared_ptr<System>> systemTypeToSystem_;
+        std::unordered_map<SystemTypeId, Signature> systemTypeToSignature_;
+
     public:
         template <typename SystemType>
-        SystemType* registerSystem(ECS* ecs)
+        std::shared_ptr<SystemType> registerType()
         {
-            auto system{std::make_unique<SystemType>(ecs)};
+            auto system = std::make_shared<SystemType>();
 
-            systems_.push_back(system);
-            return &system;
+            systemTypeToSystem_.insert({typeid(SystemType), system});
+
+            return system;
         }
 
-        std::vector<std::shared_ptr<ISystem>>* getSystems() { return &systems_; }
-
-    private:
-        std::vector<std::shared_ptr<ISystem>> systems_;
+        template <typename SystemType>
+        void setSignature(Signature const& signature)
+        {
+            systemTypeToSignature_.insert({typeid(SystemType), signature});
+        }
     };
-} // namespace snx
+}
 
 #endif

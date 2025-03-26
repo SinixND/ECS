@@ -1,33 +1,36 @@
 #ifndef IG20250323182928
 #define IG20250323182928
 
-#include "Component.h"
 #include "DenseMap.h"
 #include "EntityId.h"
+#include "Id.h"
 #include <memory>
+#include <typeindex>
 #include <unordered_map>
 
 namespace snx
 {
+    using ComponentTypeId = std::type_index;
+
     class ComponentManager
     {
-        std::unordered_map<ComponentTypeId, std::unique_ptr<IDenseMap<ComponentTypeId>>> componentContainersByTypeId_{};
+        std::unordered_map<ComponentTypeId, std::shared_ptr<IDenseMap<EntityId>>> componentContainersByTypeId_{};
 
     public:
         //* Create container for ComponentType
         template <typename ComponentType>
-        void registerComponentType()
+        void registerType()
         {
-            componentContainersByTypeId_[ComponentType::getId()] =
-                std::make_unique<DenseMap<EntityId, ComponentType>>();
+            componentContainersByTypeId_[ComponentType::typeId()] =
+                std::make_shared<DenseMap<Id, ComponentType>>();
         }
 
         //* Assigns component to entity
         template <typename ComponentType>
-        void assignTo(ComponentType const& component, Id entityId)
+        void add(ComponentType const& component, Id entityId)
         {
             //* Check if container exists
-            // if (!componentContainersByTypeId_.contains(ComponentType::getId()))
+            // if (!componentContainersByTypeId_.contains(ComponentType::typeId()))
             // {
             //     registerComponentType<ComponentType>();
             // }
@@ -38,7 +41,7 @@ namespace snx
 
         //* Access a specific component from a entity
         template <typename ComponentType>
-        ComponentType& getFrom(EntityId entityId)
+        ComponentType& get(Id entityId)
         {
             //* Check if entity exists
             // if (!testEntity<ComponentType>(entityId))
@@ -52,7 +55,7 @@ namespace snx
 
         //* Remove a component from an entity
         template <typename ComponentType>
-        void removeFrom(EntityId entityId)
+        void remove(Id entityId)
         {
             //* Check if container exists
             // if (testContainer<ComponentType>())
@@ -64,7 +67,7 @@ namespace snx
             getComponentContainer<ComponentType>()->erase(entityId);
         }
 
-        void removeAllComponentsFrom(EntityId entityId)
+        void removeAll(Id entityId)
         {
             for (auto const& [componentTypeId, container] : componentContainersByTypeId_)
             {
@@ -72,7 +75,7 @@ namespace snx
             }
         }
 
-        std::unordered_map<ComponentTypeId, std::unique_ptr<IDenseMap<EntityId>>>* getAllContainers()
+        std::unordered_map<ComponentTypeId, std::shared_ptr<IDenseMap<EntityId>>>* getAllContainers()
         {
             return &componentContainersByTypeId_;
         }
@@ -87,7 +90,7 @@ namespace snx
 
         //* Check if entity exists in container
         // template <typename ComponentType>
-        // bool testEntity(EntityId entityId)
+        // bool testEntity(Id entityId)
         // {
         //     if (!testContainer<ComponentType>())
         //     {
@@ -99,13 +102,12 @@ namespace snx
 
         //* Return pointer to concrete container
         template <typename ComponentType>
-        DenseMap<EntityId, ComponentType>* getComponentContainer()
+        DenseMap<Id, ComponentType>* getComponentContainer()
         {
-            return dynamic_cast<DenseMap<EntityId, ComponentType>*>(
-                componentContainersByTypeId_[ComponentType::getId()].get());
+            return std::static_pointer_cast<DenseMap<Id, ComponentType>>(
+                componentContainersByTypeId_[ComponentType::getId()]);
         }
     };
-
 }
 
 #endif

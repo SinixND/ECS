@@ -20,9 +20,9 @@ namespace snx
             return idManager_.requestId();
         }
 
-        void removeEntity(EntityId entityId)
+        void removeEntity(Id entityId)
         {
-            componentManager_.removeAllComponentsFrom(entityId);
+            componentManager_.removeAll(entityId);
             idManager_.suspendId(entityId);
         }
 
@@ -31,28 +31,28 @@ namespace snx
         template <typename ComponentType>
         void registerComponentType()
         {
-            componentManager_.registerComponentType<ComponentType>();
+            componentManager_.registerType<ComponentType>();
         }
 
         template <typename ComponentType>
         void assignComponent(ComponentType const& component, Id entityId)
         {
             //* Assign component to entity
-            componentManager_.assignTo(component, entityId);
+            componentManager_.add(component, entityId);
         }
 
         template <typename ComponentType>
-        ComponentType& getComponent(EntityId entityId)
+        ComponentType& getComponent(Id entityId)
         {
             // Return component
-            return componentManager_.getFrom<ComponentType>(entityId);
+            return componentManager_.get<ComponentType>(entityId);
         }
 
         template <typename ComponentType>
-        void removeComponent(EntityId entityId)
+        void removeComponent(Id entityId)
         {
             // Remove component from entity
-            componentManager_.removeFrom<ComponentType>(entityId);
+            componentManager_.remove<ComponentType>(entityId);
         }
     };
 }

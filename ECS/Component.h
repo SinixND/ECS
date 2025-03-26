@@ -5,23 +5,18 @@
 
 namespace snx
 {
-    using ComponentTypeId = Id;
-
-    struct IComponent
+    struct CTypeCounter
     {
-        virtual ~IComponent() = default;
-
-    protected:
-        static inline ComponentTypeId componentTypeId_{0};
+        static inline Id counter{0};
     };
 
-    class Component : public IComponent
+    template <typename T>
+    class Component : public CTypeCounter
     {
     public:
-        static inline ComponentTypeId getId()
+        static inline Id typeId()
         {
-            //* Initialized only once per templated type because it is static
-            static ComponentTypeId id{++componentTypeId_};
+            static Id id{++counter};
 
             return id;
         }
