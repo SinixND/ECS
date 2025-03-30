@@ -1,0 +1,3 @@
+[submodule "DenseMap"]
+	path = DenseMap
+	url = https://github.com/SinixND/DenseMap
