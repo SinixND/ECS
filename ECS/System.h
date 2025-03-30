@@ -8,7 +8,7 @@ namespace snx
 {
     struct System
     {
-        std::unordered_set<Id> entities_;
+        std::unordered_set<Id> entities;
     };
 }
 

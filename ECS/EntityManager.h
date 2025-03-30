@@ -1,7 +1,7 @@
 #ifndef IG20250325230919
 #define IG20250325230919
 
-#include "EntityId.h"
+#include "Entity.h"
 #include "Id.h"
 #include "IdManager.h"
 #include "Signature.h"
@@ -12,27 +12,36 @@ namespace snx
     class EntityManager
     {
         IdManager idManager_;
-        std::unordered_map<EntityId, Signature> entityToSignature_;
+        std::unordered_map<Entity, Signature> entityToSignature_;
 
     public:
         Id createEntity()
         {
-            return idManager_.requestId();
+            Id entity = idManager_.requestId();
+
+            entityToSignature_.insert({entity, Signature{}});
+
+            return entity;
         }
 
-        void deleteEntity(EntityId entityId)
+        void deleteEntity(Entity entityId)
         {
-            entityToSignature_[entityId].reset();
+            entityToSignature_.at(entityId).reset();
 
             idManager_.suspendId(entityId);
         }
 
-        void setSignature(EntityId entityId, Signature const& signature)
+        void setSignature(Entity entityId, Id componentTypeId)
         {
-            entityToSignature_[entityId] = signature;
+            entityToSignature_.at(entityId).set(componentTypeId);
         }
 
-        Signature const& getSignature(EntityId entityId)
+        void resetSignature(Entity entityId, Id componentTypeId)
+        {
+            entityToSignature_.at(entityId).reset(componentTypeId);
+        }
+
+        Signature const& getSignature(Entity entityId)
         {
             return entityToSignature_[entityId];
         }

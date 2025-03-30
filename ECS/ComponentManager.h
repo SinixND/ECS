@@ -2,19 +2,18 @@
 #define IG20250323182928
 
 #include "DenseMap.h"
-#include "EntityId.h"
+#include "Entity.h"
 #include "Id.h"
 #include <memory>
-#include <typeindex>
 #include <unordered_map>
 
 namespace snx
 {
-    using ComponentTypeId = std::type_index;
+    using ComponentTypeId = Id;
 
     class ComponentManager
     {
-        std::unordered_map<ComponentTypeId, std::shared_ptr<IDenseMap<EntityId>>> componentContainersByTypeId_{};
+        std::unordered_map<ComponentTypeId, std::shared_ptr<IDenseMap<Entity>>> componentContainersByTypeId_{};
 
     public:
         //* Create container for ComponentType
@@ -29,12 +28,6 @@ namespace snx
         template <typename ComponentType>
         void add(ComponentType const& component, Id entityId)
         {
-            //* Check if container exists
-            // if (!componentContainersByTypeId_.contains(ComponentType::typeId()))
-            // {
-            //     registerComponentType<ComponentType>();
-            // }
-
             //* Add component
             getComponentContainer<ComponentType>()->insert(entityId, component);
         }
@@ -43,12 +36,6 @@ namespace snx
         template <typename ComponentType>
         ComponentType& get(Id entityId)
         {
-            //* Check if entity exists
-            // if (!testEntity<ComponentType>(entityId))
-            // {
-            //     return nullptr;
-            // }
-
             // Return component
             return getComponentContainer<ComponentType>()->at(entityId);
         }
@@ -57,12 +44,6 @@ namespace snx
         template <typename ComponentType>
         void remove(Id entityId)
         {
-            //* Check if container exists
-            // if (testContainer<ComponentType>())
-            // {
-            //     return;
-            // }
-
             //* Remove component
             getComponentContainer<ComponentType>()->erase(entityId);
         }
@@ -75,37 +56,18 @@ namespace snx
             }
         }
 
-        std::unordered_map<ComponentTypeId, std::shared_ptr<IDenseMap<EntityId>>>* getAllContainers()
+        std::unordered_map<ComponentTypeId, std::shared_ptr<IDenseMap<Entity>>>* getAllContainers()
         {
             return &componentContainersByTypeId_;
         }
 
     private:
-        //* Check if container exists
-        // template <typename ComponentType>
-        // bool testContainer()
-        // {
-        //     return componentContainersByTypeId_.contains(ComponentType::getId());
-        // }
-
-        //* Check if entity exists in container
-        // template <typename ComponentType>
-        // bool testEntity(Id entityId)
-        // {
-        //     if (!testContainer<ComponentType>())
-        //     {
-        //         return false;
-        //     }
-        //
-        //     return getComponentContainer<ComponentType>()->contains(entityId);
-        // }
-
         //* Return pointer to concrete container
         template <typename ComponentType>
-        DenseMap<Id, ComponentType>* getComponentContainer()
+        std::shared_ptr<DenseMap<Id, ComponentType>> getComponentContainer()
         {
             return std::static_pointer_cast<DenseMap<Id, ComponentType>>(
-                componentContainersByTypeId_[ComponentType::getId()]);
+                componentContainersByTypeId_.at(ComponentType::typeId()));
         }
     };
 }
